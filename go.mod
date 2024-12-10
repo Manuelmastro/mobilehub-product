@@ -1,4 +1,5 @@
-module mobilehub-product
+module github.com/Manuelmastro/mobilehub-product
+
 
 go 1.22.5
 

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"mobilehub-product/pkg/db"
-	"mobilehub-product/pkg/models"
-	"mobilehub-product/pkg/pb"
+	"github.com/Manuelmastro/mobilehub-product/pkg/db"
+	"github.com/Manuelmastro/mobilehub-product/pkg/models"
+	"github.com/Manuelmastro/mobilehub-product/pkg/pb"
 )
 
 type ProductServiceServer struct {
