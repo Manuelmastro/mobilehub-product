@@ -17,3 +17,5 @@ type Product struct {
 	//HasOffer             bool `gorm:"default:false"`
 	//OfferDiscountPercent uint `gorm:"default:0"`
 }
+
+///
