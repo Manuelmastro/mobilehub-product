@@ -170,29 +170,29 @@ func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProduc
 
 ////////////////////////////
 
-func (s *ProductServiceServer) ReduceStock(ctx context.Context, req *pb.ReduceStockRequest) (*pb.ReduceStockResponse, error) {
-	for _, item := range req.Items {
-		productID, err := strconv.Atoi(item.ProductId)
-		if err != nil {
-			return nil, fmt.Errorf("invalid product ID: %v", item.ProductId)
-		}
+// func (s *ProductServiceServer) ReduceStock(ctx context.Context, req *pb.ReduceStockRequest) (*pb.ReduceStockResponse, error) {
+// 	for _, item := range req.Items {
+// 		productID, err := strconv.Atoi(item.ProductId)
+// 		if err != nil {
+// 			return nil, fmt.Errorf("invalid product ID: %v", item.ProductId)
+// 		}
 
-		var product models.Product
-		if err := s.H.DB.First(&product, productID).Error; err != nil {
-			return nil, fmt.Errorf("product not found for ID: %v", item.ProductId)
-		}
+// 		var product models.Product
+// 		if err := s.H.DB.First(&product, productID).Error; err != nil {
+// 			return nil, fmt.Errorf("product not found for ID: %v", item.ProductId)
+// 		}
 
-		if product.Stock < int32(item.Quantity) {
-			return nil, fmt.Errorf("insufficient stock for product ID: %v", item.ProductId)
-		}
+// 		if product.Stock < int32(item.Quantity) {
+// 			return nil, fmt.Errorf("insufficient stock for product ID: %v", item.ProductId)
+// 		}
 
-		product.Stock -= int32(item.Quantity)
-		if err := s.H.DB.Save(&product).Error; err != nil {
-			return nil, fmt.Errorf("failed to update stock for product ID: %v", item.ProductId)
-		}
-	}
+// 		product.Stock -= int32(item.Quantity)
+// 		if err := s.H.DB.Save(&product).Error; err != nil {
+// 			return nil, fmt.Errorf("failed to update stock for product ID: %v", item.ProductId)
+// 		}
+// 	}
 
-	return &pb.ReduceStockResponse{
-		Message: "Stock reduced successfully",
-	}, nil
-}
+// 	return &pb.ReduceStockResponse{
+// 		Message: "Stock reduced successfully",
+// 	}, nil
+// }
