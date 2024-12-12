@@ -39,10 +39,10 @@ func (s *ProductServiceServer) GetProducts(ctx context.Context, req *pb.GetProdu
 
 func (s *ProductServiceServer) AddProduct(ctx context.Context, req *pb.AddProductRequest) (*pb.AddProductResponse, error) {
 	// Authorization check for admin role
-	role, ok := ctx.Value("role").(string)
-	if !ok || role != "admin" {
-		return nil, errors.New("unauthorized: only admin can add products")
-	}
+	// role, ok := ctx.Value("role").(string)
+	// if !ok || role != "admin" {
+	// 	return nil, errors.New("unauthorized: only admin can add products")
+	// }
 
 	product := models.Product{
 		ProductName:  req.ProductName,
@@ -64,10 +64,10 @@ func (s *ProductServiceServer) AddProduct(ctx context.Context, req *pb.AddProduc
 
 func (s *ProductServiceServer) EditProduct(ctx context.Context, req *pb.EditProductRequest) (*pb.EditProductResponse, error) {
 	// Authorization check for admin role
-	role, ok := ctx.Value("role").(string)
-	if !ok || role != "admin" {
-		return nil, errors.New("unauthorized: only admin can edit products")
-	}
+	// role, ok := ctx.Value("role").(string)
+	// if !ok || role != "admin" {
+	// 	return nil, errors.New("unauthorized: only admin can edit products")
+	// }
 
 	productID, err := strconv.Atoi(req.Id)
 	if err != nil {
@@ -97,10 +97,10 @@ func (s *ProductServiceServer) EditProduct(ctx context.Context, req *pb.EditProd
 
 func (s *ProductServiceServer) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest) (*pb.DeleteProductResponse, error) {
 	// Authorization check for admin role
-	role, ok := ctx.Value("role").(string)
-	if !ok || role != "admin" {
-		return nil, errors.New("unauthorized: only admin can delete products")
-	}
+	// role, ok := ctx.Value("role").(string)
+	// if !ok || role != "admin" {
+	// 	return nil, errors.New("unauthorized: only admin can delete products")
+	// }
 
 	productID, err := strconv.Atoi(req.Id)
 	if err != nil {
@@ -166,4 +166,33 @@ func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProduc
 	}
 
 	return response, nil
+}
+
+////////////////////////////
+
+func (s *ProductServiceServer) ReduceStock(ctx context.Context, req *pb.ReduceStockRequest) (*pb.ReduceStockResponse, error) {
+	for _, item := range req.Items {
+		productID, err := strconv.Atoi(item.ProductId)
+		if err != nil {
+			return nil, fmt.Errorf("invalid product ID: %v", item.ProductId)
+		}
+
+		var product models.Product
+		if err := s.H.DB.First(&product, productID).Error; err != nil {
+			return nil, fmt.Errorf("product not found for ID: %v", item.ProductId)
+		}
+
+		if product.Stock < int32(item.Quantity) {
+			return nil, fmt.Errorf("insufficient stock for product ID: %v", item.ProductId)
+		}
+
+		product.Stock -= int32(item.Quantity)
+		if err := s.H.DB.Save(&product).Error; err != nil {
+			return nil, fmt.Errorf("failed to update stock for product ID: %v", item.ProductId)
+		}
+	}
+
+	return &pb.ReduceStockResponse{
+		Message: "Stock reduced successfully",
+	}, nil
 }
