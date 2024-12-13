@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/Manuelmastro/mobilehub-product/pkg/db"
-	"github.com/Manuelmastro/mobilehub-product/pkg/models"
-	"github.com/Manuelmastro/mobilehub-product/pkg/pb"
+	"github.com/Manuelmastro/mobilehub-product/v3/pkg/db"
+	"github.com/Manuelmastro/mobilehub-product/v3/pkg/models"
+	"github.com/Manuelmastro/mobilehub-product/v3/pkg/pb"
 	"gorm.io/gorm"
 )
 
@@ -171,7 +171,7 @@ func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProduc
 	return response, nil
 }
 
-////////////////////////
+////////////////////////abcdefg///
 
 func (s *ProductServiceServer) ReduceStock(ctx context.Context, req *pb.ReduceStockRequest) (*pb.ReduceStockResponse, error) {
 	var product models.Product // Replace `Product` with your actual product struct

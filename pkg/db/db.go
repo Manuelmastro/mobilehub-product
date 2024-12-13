@@ -3,7 +3,7 @@ package db
 import (
 	"log"
 
-	"github.com/Manuelmastro/mobilehub-product/pkg/models"
+	"github.com/Manuelmastro/mobilehub-product/v3/pkg/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
