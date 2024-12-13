@@ -9,6 +9,7 @@ import (
 	"github.com/Manuelmastro/mobilehub-product/pkg/db"
 	"github.com/Manuelmastro/mobilehub-product/pkg/models"
 	"github.com/Manuelmastro/mobilehub-product/pkg/pb"
+	"gorm.io/gorm"
 )
 
 type ProductServiceServer struct {
@@ -168,31 +169,48 @@ func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProduc
 	return response, nil
 }
 
-////////////////////////////
+////////////////////////
 
-// func (s *ProductServiceServer) ReduceStock(ctx context.Context, req *pb.ReduceStockRequest) (*pb.ReduceStockResponse, error) {
-// 	for _, item := range req.Items {
-// 		productID, err := strconv.Atoi(item.ProductId)
-// 		if err != nil {
-// 			return nil, fmt.Errorf("invalid product ID: %v", item.ProductId)
-// 		}
+func (s *ProductServiceServer) ReduceStock(ctx context.Context, req *pb.ReduceStockRequest) (*pb.ReduceStockResponse, error) {
+	var product models.Product // Replace `Product` with your actual product struct
 
-// 		var product models.Product
-// 		if err := s.H.DB.First(&product, productID).Error; err != nil {
-// 			return nil, fmt.Errorf("product not found for ID: %v", item.ProductId)
-// 		}
+	// Fetch product details directly from the database
+	err := s.H.DB.Where("id = ?", req.ProductId).First(&product).Error // Assuming GORM is used
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return &pb.ReduceStockResponse{
+				Success: false,
+				Message: "Product not found",
+			}, nil
+		}
+		return &pb.ReduceStockResponse{
+			Success: false,
+			Message: "Error fetching product details",
+		}, nil
+	}
 
-// 		if product.Stock < int32(item.Quantity) {
-// 			return nil, fmt.Errorf("insufficient stock for product ID: %v", item.ProductId)
-// 		}
+	// Check if enough stock is available
+	if product.Stock < req.Quantity {
+		return &pb.ReduceStockResponse{
+			Success: false,
+			Message: "Insufficient stock",
+		}, nil
+	}
 
-// 		product.Stock -= int32(item.Quantity)
-// 		if err := s.H.DB.Save(&product).Error; err != nil {
-// 			return nil, fmt.Errorf("failed to update stock for product ID: %v", item.ProductId)
-// 		}
-// 	}
+	// Reduce stock
+	product.Stock -= req.Quantity
 
-// 	return &pb.ReduceStockResponse{
-// 		Message: "Stock reduced successfully",
-// 	}, nil
-// }
+	// Save updated product details to the database
+	err = s.H.DB.Save(&product).Error // Save updated stock back to DB
+	if err != nil {
+		return &pb.ReduceStockResponse{
+			Success: false,
+			Message: "Failed to update stock",
+		}, nil
+	}
+
+	return &pb.ReduceStockResponse{
+		Success: true,
+		Message: "Stock updated successfully",
+	}, nil
+}

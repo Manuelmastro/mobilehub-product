@@ -12,6 +12,7 @@ service ProductService {
     rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse) {}
     rpc ViewProducts(ViewProductsRequest) returns (ViewProductsResponse) {}
     rpc GetProduct(GetProductRequest) returns (GetProductResponse) {}
+    rpc ReduceStock(ReduceStockRequest) returns (ReduceStockResponse);
 }
 
 
@@ -74,6 +75,16 @@ message GetProductRequest {
 
 message GetProductResponse {
     Product product = 1;
+}
+
+message ReduceStockRequest {
+  int64 product_id = 1; // ID of the product
+  int32 quantity = 2;   // Quantity to reduce
+}
+
+message ReduceStockResponse {
+  bool success = 1;     // Indicate success or failure
+  string message = 2;   // Optional message
 }
 
 // Product Structure
