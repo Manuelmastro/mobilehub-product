@@ -145,6 +145,8 @@ func (s *ProductServiceServer) ViewProducts(ctx context.Context, req *pb.ViewPro
 	return &pb.ViewProductsResponse{Products: response}, nil
 }
 
+///
+
 func (s *ProductServiceServer) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.GetProductResponse, error) {
 	var product models.Product
 
